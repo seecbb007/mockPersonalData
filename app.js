@@ -168,3 +168,95 @@ const totalPayments = calculateTotalCreditReportPayments(
 // );
 
 //Assets Calculation
+
+//Check Bank Statement Period
+function checkEachBankStatementsLastTwoMonths(
+  bankStatements,
+  simulatedCurrentDate = "2024-03-01"
+) {
+  const currentDate = new Date(simulatedCurrentDate);
+  const twoMonthsAgoDate = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth() - 2,
+    1
+  );
+
+  const bankChecks = {};
+
+  Object.entries(bankStatements).forEach(([bankName, statements]) => {
+    // Assume true until a statement not in the last two months is found
+    let allFromLastTwoMonths = true;
+
+    statements.forEach(({ statementPeriod }) => {
+      const [, endDateStr] = statementPeriod.split(" - ");
+      const endDate = new Date(endDateStr);
+
+      if (endDate < twoMonthsAgoDate) {
+        allFromLastTwoMonths = false;
+      }
+    });
+
+    bankChecks[bankName] = allFromLastTwoMonths;
+  });
+
+  return bankChecks;
+}
+const result = checkEachBankStatementsLastTwoMonths(
+  mockPersonalData.mortgageApplication.bankStatements
+);
+console.log("Bank Statement Period", result);
+
+// --- How to make sure the borrower name showed in the bankStatements accountholder name?
+
+function validateBorrowerNameByBank(bankStatements, customerInfo) {
+  const fullName = `${customerInfo.firstName} ${customerInfo.lastName}`;
+  const bankNameResults = {};
+
+  Object.entries(bankStatements).forEach(([bankName, statements]) => {
+    // Check each statement in the current bank for a matching name
+    const allNamesMatch = statements.every(
+      (statement) => statement.accountHolder === fullName
+    );
+    bankNameResults[bankName] = allNamesMatch;
+  });
+
+  return bankNameResults;
+}
+const nameMatchResults = validateBorrowerNameByBank(
+  mockPersonalData.mortgageApplication.bankStatements,
+  mockPersonalData.mortgageApplication.customerInfo
+);
+
+console.log("Account Holder", nameMatchResults);
+
+//--- How to make sure there is no more than one large deposit, more than 10000, in the bank statement transaction
+// Need to analyze the whole bank statement transaction
+
+//Make sure same Bank Name
+
+function validateConsistencyOfBankNames(bankStatements) {
+  const consistencyResults = {};
+
+  Object.entries(bankStatements).forEach(([bankKey, statements]) => {
+    // Assuming there's at least one statement per bank, use the first statement's bankName as the reference.
+    if (statements.length === 0) {
+      // If there are no statements for a bank, you might want to handle this case differently.
+      // For now, let's assume it's consistent by default (or mark as 'No Statements' for clarity).
+      consistencyResults[bankKey] = "No Statements";
+      return;
+    }
+
+    const referenceBankName = statements[0].bankName;
+    const allMatch = statements.every(
+      (statement) => statement.bankName === referenceBankName
+    );
+    consistencyResults[bankKey] = allMatch;
+  });
+
+  return consistencyResults;
+}
+
+const consistencyCheckResults = validateConsistencyOfBankNames(
+  mockPersonalData.mortgageApplication.bankStatements
+);
+console.log("Bank Name?", consistencyCheckResults);

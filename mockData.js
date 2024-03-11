@@ -169,7 +169,7 @@ export const mockPersonalData = {
           documentId: "bank_statement_jan_2022",
           accountNumber: "****1234",
           bankName: "Big Bank",
-          statementPeriod: "2022-01-01 - 2022-01-31",
+          statementPeriod: "2023-11-01 - 2023-11-31",
           openingBalance: 10000,
           closingBalance: 12000,
           base64EncodedFile:
@@ -180,7 +180,7 @@ export const mockPersonalData = {
           documentId: "bank_statement_feb_2022",
           accountNumber: "****1234",
           bankName: "Big Bank",
-          statementPeriod: "2022-02-01 - 2022-02-28",
+          statementPeriod: "2024-02-01 - 2024-02-28",
           openingBalance: 12000,
           closingBalance: 20000,
           base64EncodedFile:
@@ -193,7 +193,7 @@ export const mockPersonalData = {
           documentId: "bank_statement_jan_2022",
           accountNumber: "****4567",
           bankName: "Small Bank",
-          statementPeriod: "2022-01-01 - 2022-01-31",
+          statementPeriod: "2024-01-01 - 2024-01-31",
           openingBalance: 10000,
           closingBalance: 30000,
           base64EncodedFile:
@@ -204,7 +204,7 @@ export const mockPersonalData = {
           documentId: "bank_statement_feb_2022",
           accountNumber: "****4567",
           bankName: "Small Bank",
-          statementPeriod: "2022-02-01 - 2022-02-28",
+          statementPeriod: "2024-02-01 - 2024-02-28",
           openingBalance: 30000,
           closingBalance: 35000,
           base64EncodedFile:
