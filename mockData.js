@@ -14,22 +14,86 @@ export const mockPersonalData = {
         zipCode: "12345",
       },
     },
-    paystub: {
-      documentId: "paystub1",
-      employerName: "XYZ Corp",
-      employerAddress: {
-        street: "456 Market St",
-        city: "San Francisco",
-        state: "CA",
-        zipCode: "94102",
+    paystub: [
+      {
+        documentId: "paystub1",
+        employerName: "XYZ Corp",
+        employerAddress: {
+          street: "456 Market St",
+          city: "San Francisco",
+          state: "CA",
+          zipCode: "94102",
+        },
+        payPeriod: "2022-01-01 - 2022-01-15",
+        grossIncome: 5000,
+        netIncome: 4000,
+        yearToDateIncome: 10000,
+        base64EncodedFile:
+          "JVBERi0xLjQKJcOkw7zDtsOfCjIgMCBvYmoKPDwvTGVuZ3RoIDMgMCBSPj4Kc3RyZWFtCkJUCjAgMCBUZAovRjEgMTIgVGYKKC4uLlR4dC4uLikKRVQKZW5kc3RyZWFtCmVuZG9iagoKMyAwIG9iagozOTAKZW5kb2JqCg==",
+        overtime: 10,
+        overtimeRate: 35,
       },
-      payPeriod: "2022-01-01 - 2022-01-15",
-      grossIncome: 5000,
-      netIncome: 4000,
-      yearToDateIncome: 10000,
-      base64EncodedFile:
-        "JVBERi0xLjQKJcOkw7zDtsOfCjIgMCBvYmoKPDwvTGVuZ3RoIDMgMCBSPj4Kc3RyZWFtCkJUCjAgMCBUZAovRjEgMTIgVGYKKC4uLlR4dC4uLikKRVQKZW5kc3RyZWFtCmVuZG9iagoKMyAwIG9iagozOTAKZW5kb2JqCg==",
-    },
+      {
+        documentId: "paystub2",
+        employerName: "ABC Inc",
+        employerAddress: {
+          street: "789 Mission St",
+          city: "San Francisco",
+          state: "CA",
+          zipCode: "94103",
+        },
+        payPeriod: "2022-01-16 - 2022-01-31",
+        grossIncome: 5000,
+        netIncome: 4000,
+        yearToDateIncome: 15000,
+        base64EncodedFile:
+          "JVBERi0xLjQKJcOkw7zDtsOfCjIgMCBvYmoKPDwvTGVuZ3RoIDMgMCBSPj4Kc3RyZWFtCkJUCjAgMCBUZAovRjEgMTIgVGYKKC4uLlR4dC4uLikKRVQKZW5kc3RyZWFtCmVuZG9iagoKMyAwIG9iagozOTAKZW5kb2JqCg==",
+      },
+    ],
+    yearEndPayStub: [
+      {
+        documentId: "yearEndpaystub",
+        employerName: "XYZ Corp",
+        employerAddress: {
+          street: "456 Market St",
+          city: "San Francisco",
+          state: "CA",
+          zipCode: "94102",
+        },
+        payPeriod: "2022-12-15 - 2022-12-31",
+        grossIncome: 5000,
+        netIncome: 4000,
+        yearToDateIncome: 120000,
+        base64EncodedFile:
+          "JVBERi0xLjQKJcOkw7zDtsOfCjIgMCBvYmoKPDwvTGVuZ3RoIDMgMCBSPj4Kc3RyZWFtCkJUCjAgMCBUZAovRjEgMTIgVGYKKC4uLlR4dC4uLikKRVQKZW5kc3RyZWFtCmVuZG9iagoKMyAwIG9iagozOTAKZW5kb2JqCg==",
+        overtime: 6,
+        overtimeRate: 35,
+        yearToDateOvertime: 80,
+        bonus: 10000,
+        commission: 5000,
+      },
+      {
+        documentId: "yearEndpaystub",
+        employerName: "XYZ Corp",
+        employerAddress: {
+          street: "456 Market St",
+          city: "San Francisco",
+          state: "CA",
+          zipCode: "94102",
+        },
+        payPeriod: "2023-12-15 - 2023-12-31",
+        grossIncome: 5000,
+        netIncome: 4000,
+        yearToDateIncome: 120000,
+        base64EncodedFile:
+          "JVBERi0xLjQKJcOkw7zDtsOfCjIgMCBvYmoKPDwvTGVuZ3RoIDMgMCBSPj4Kc3RyZWFtCkJUCjAgMCBUZAovRjEgMTIgVGYKKC4uLlR4dC4uLikKRVQKZW5kc3RyZWFtCmVuZG9iagoKMyAwIG9iagozOTAKZW5kb2JqCg==",
+        overtime: 3,
+        overtimeRate: 35,
+        yearToDateOvertime: 60,
+        bonus: 20000,
+        commission: 6000,
+      },
+    ],
     // paystubs: [
     //   {
     //     documentId: "paystub1",
