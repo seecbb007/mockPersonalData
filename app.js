@@ -15,35 +15,48 @@ const getCustomerPaystub = () => {
   return mockPersonalData.mortgageApplication.paystub;
 };
 const customerPaystub = getCustomerPaystub();
+//console.log("AAA", customerPaystub);
+// //-How to check this is biweekly paystub && calculate the monthly income
 
-//-How to check this is biweekly paystub && calculate the monthly income
+function calculateMonthlyIncomeFromMostRecentPaystub(paystubs) {
+  if (paystubs.length === 0) {
+    console.log("No paystubs provided");
+    return -1;
+  }
 
-function calculateMonthlyIncome(customerPaystub) {
+  // Assuming paystubs are sorted by date, with the most recent last. If not, you'll need to sort them.
+  const mostRecentPaystub = paystubs[paystubs.length - 1];
   const { payPeriod, hourlyRate, grossIncome, netIncome, workedHour } =
-    customerPaystub;
+    mostRecentPaystub;
 
   const [startDateStr, endDateStr] = payPeriod.split(" - ");
   const startDate = new Date(startDateStr);
   const endDate = new Date(endDateStr);
   // Calculate the difference in days between the start and end dates
-  const dayDifference = (endDate - startDate) / (1000 * 60 * 60 * 24);
+  const dayDifference = (endDate - startDate) / (1000 * 60 * 60 * 24); // +1 to include the end date
 
-  if (dayDifference >= 13 && dayDifference <= 15 && hourlyRate) {
-    const monthlyGrossIncome = (hourlyRate * workedHour * 52) / 12; // working 40 hour per week for 52 weeks
-    return monthlyGrossIncome;
-  } else if (dayDifference >= 13 && dayDifference <= 15) {
-    const monthlyGrossIncome = grossIncome * 2;
-    return monthlyGrossIncome;
-  } else if (dayDifference > 15 && dayDifference <= 31) {
-    const monthlyGrossIncome = grossIncome;
-    return monthlyGrossIncome;
+  // Adjust the conditions and calculations according to the updated logic for handling multiple paystubs
+  if (dayDifference >= 13 && dayDifference <= 15) {
+    // Biweekly paystub
+    if (hourlyRate && workedHour) {
+      return (hourlyRate * workedHour * 52) / 12; // For hourly employees
+    } else {
+      return grossIncome * 2; // Assuming 2 pay periods per month
+    }
+  } else if (dayDifference >= 28 && dayDifference <= 31) {
+    // Monthly paystub
+    return grossIncome; // Use the gross income directly for monthly paystubs
   } else {
-    console.log("Wrong Pay Period");
+    console.log("Pay period does not match expected ranges");
     return -1;
   }
 }
 
-calculateMonthlyIncome(customerPaystub);
+// Example usage with the updated paystub array
+// const monthlyIncome = calculateMonthlyIncomeFromMostRecentPaystub(
+//   mockPersonalData.mortgageApplication.paystub
+// );
+// console.log(monthlyIncome);
 
 //2. Latest year w-2
 
@@ -63,8 +76,80 @@ function calculateMonthlyIncomeFromW2s(w2s) {
 // );
 //console.log(monthlyIncome);
 
-//3. Latest year federal tax return
+//3.Latest year federal tax return
 //The reason why we receive a federal tax return is to review the list of properties for investment houses, self-employed income, or other income that the lender needs to examine.
+
+//4.Using Year-end Paystub to calculate bonus/ comission/ overtime
+
+// OVERTIME
+function calculateMonthlyOvertimeIncome(yearEndPayStubs) {
+  // Sort the paystubs by pay period to ensure we're working with the most recent entries
+  const sortedPayStubs = yearEndPayStubs.sort(
+    (a, b) =>
+      new Date(a.payPeriod.split(" - ")[1]) -
+      new Date(b.payPeriod.split(" - ")[1])
+  );
+
+  // Take the last two entries for the most recent two years
+  const recentYearStubs = sortedPayStubs.slice(-2);
+
+  // Calculate the total yearToDateOvertime from the most recent two entries
+  const totalYearToDateOvertime = recentYearStubs.reduce(
+    (total, stub) => total + (stub.yearToDateOvertime || 0),
+    0
+  );
+
+  // Use the overtime rate from the most recent entry
+  const overtimeRate = recentYearStubs[recentYearStubs.length - 1].overtimeRate;
+
+  // Calculate the total overtime income and then divide by 12 for the monthly income
+  const totalOvertimeIncome = totalYearToDateOvertime * overtimeRate;
+  const monthlyOvertimeIncome = totalOvertimeIncome / 12;
+
+  return monthlyOvertimeIncome.toFixed(0);
+}
+
+// Assuming mockPersonalData is defined as per your structure
+// const yearEndPayStubs = mockPersonalData.mortgageApplication.yearEndPayStub;
+// const monthlyOvertimeIncome = calculateMonthlyOvertimeIncome(yearEndPayStubs);
+// console.log(monthlyOvertimeIncome);
+
+//Comission
+function calculateEachYearEndPayStubMonthlyComission(yearEndPayStubs) {
+  return yearEndPayStubs.map((com) => {
+    const yearlyComission = com.commission || 0; // Default to 0 if not present
+    const monthlyComission = Math.round((yearlyComission / 12) * 10) / 10; // Calculate and round to one decimal point
+    return {
+      documentId: com.documentId, // Include documentId to identify the paystub
+      monthlyComission,
+    };
+  });
+}
+
+//MOCK DATA Console
+// const monthlyComission = calculateEachYearEndPayStubMonthlyComission(
+//   mockPersonalData.mortgageApplication.yearEndPayStub
+// );
+// console.log(monthlyComission);
+
+//  Bonus
+
+function calculateEachYearEndPayStubMonthlyBonus(yearEndPayStubs) {
+  return yearEndPayStubs.map((stub) => {
+    const yearlyBonus = stub.bonus || 0; // Default to 0 if not present
+    const monthlyBonus = Math.round((yearlyBonus / 12) * 10) / 10; // Calculate and round to one decimal point
+    return {
+      documentId: stub.documentId, // Include documentId to identify the paystub
+      monthlyBonus,
+    };
+  });
+}
+
+//MOCK DATA Console
+// const monthlyBonuses = calculateEachYearEndPayStubMonthlyBonus(
+//   mockPersonalData.mortgageApplication.yearEndPayStub
+// );
+// console.log(monthlyBonuses);
 
 //Debts Calculation
 //1.  Latest 1 month all property mortgage statement
@@ -204,7 +289,7 @@ function checkEachBankStatementsLastTwoMonths(
 const result = checkEachBankStatementsLastTwoMonths(
   mockPersonalData.mortgageApplication.bankStatements
 );
-console.log("Bank Statement Period", result);
+//console.log("Bank Statement Period", result);
 
 // --- How to make sure the borrower name showed in the bankStatements accountholder name?
 
@@ -227,7 +312,7 @@ const nameMatchResults = validateBorrowerNameByBank(
   mockPersonalData.mortgageApplication.customerInfo
 );
 
-console.log("Account Holder", nameMatchResults);
+//console.log("Account Holder", nameMatchResults);
 
 //--- How to make sure there is no more than one large deposit, more than 10000, in the bank statement transaction
 // Need to analyze the whole bank statement transaction
@@ -259,4 +344,4 @@ function validateConsistencyOfBankNames(bankStatements) {
 const consistencyCheckResults = validateConsistencyOfBankNames(
   mockPersonalData.mortgageApplication.bankStatements
 );
-console.log("Bank Name?", consistencyCheckResults);
+//console.log("Bank Name?", consistencyCheckResults);
